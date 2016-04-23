@@ -19,7 +19,7 @@
 
 int AddHttpHeader(char *header,char *status)
 {
-	if(status == NULL)
+	if(header == NULL || status == NULL)
 		return -1;
 	strcat(header, status);
 	strcat(header, "Server: RcheWebServ v0.1");
@@ -31,7 +31,10 @@ int AddHttpContent(char *content, char *address)
 {
 	FILE *fp;
 	char line[1024];
-	fp = fopen(address,"r");
+	if(content == NULL || address == NULL)
+		return -1;
+	if(NULL == (fp = fopen(address,"r")))
+		return -1;
 	while(fgets(line,sizeof(line),fp) != NULL){
 		strcat(content,line);
 	}
