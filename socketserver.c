@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include<signal.h>
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,21 @@
 #define OK "HTTP/1.1 200 OK\n"
 #define UNAUTHORIZED "HTTP/1.1 Unauthorized 401\n"
 #define NOTFOUND "HTTP/1.1 Not Found 404\n"
+
+int listenfd;
+
+void SignalFunction(int sig)
+{
+	switch(sig){
+		case 2:
+			printf("<Server>Server stop...\n");
+			close(listenfd);
+			exit(0);
+			break;
+		default:
+			break;
+	}
+}
 
 int AddHttpHeader(char *header,char *status)
 {
@@ -103,7 +119,7 @@ void communication(void *arg)
 
 int socket_server(int port)
 {
-	int listenfd = 0, connfd = 0;
+	int connfd = 0;
 	struct sockaddr_in serv_addr; 
 	
 	printf("<Server>Initialize...\n");
@@ -138,7 +154,12 @@ int socket_server(int port)
 int main(int argc, char *argv[])
 {
 
-	socket_server(atoi(argv[1]));
-
+	if(signal(SIGINT, SignalFunction) == SIG_ERR){
+		return 0;
+	}
+	if(argc < 2)
+		return 0;
+	else
+		socket_server(atoi(argv[1]));
 	return 0;
 }
