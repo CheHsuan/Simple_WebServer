@@ -111,7 +111,6 @@ void communication(void *arg)
 		printf("\n<Server>Error : Read Failed \n");
 	}
 	else{
-		//printf("%s",buffer);
 		HttpParser(buffer,connfd);
 	}
 	close(connfd);	
@@ -157,8 +156,10 @@ int main(int argc, char *argv[])
 	if(signal(SIGINT, SignalFunction) == SIG_ERR){
 		return 0;
 	}
-	if(argc < 2)
+	if(argc < 2){
+        printf("<Server>Error : must to indicate the port of server\n");
 		return 0;
+    }
 	else
 		socket_server(atoi(argv[1]));
 	return 0;
